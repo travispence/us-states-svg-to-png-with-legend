@@ -1,4 +1,5 @@
-# tcp-us-states-svg
+# us-states-svg-to-png-with-legend
+A tool to assist creating a PNG graphic from an SVG with custom legend categories and labels.
 
 ## Project setup
 ```
@@ -27,3 +28,4 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
