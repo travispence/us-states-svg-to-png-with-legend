@@ -4,6 +4,7 @@ A tool to assist creating a PNG image from an SVG with custom legend colors and 
 
 The was built with the Vue CLI tool and follows the basic structure provided. 
 
+![Demo](/src/assets/mapeditor.gif?raw=true "Demo of Product")
 
 ## Limitations
 
