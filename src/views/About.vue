@@ -17,7 +17,7 @@
        Material Chips - MIT License ( <a href="https://codepen.io/hansmaad/pen/QGYpey">Source - Hannes Kamecke</a> )
     </p>
     <p>  
-      <a href="">
+      <a href="https://github.com/travispence/us-states-svg-to-png-with-legend">
         View Source Code on Github
       </a>
       </p>
