@@ -1,38 +1,45 @@
 <template>
+  
   <div class="home">
-      <div style="display: flex; flex-direction: column; max-width: 960px; margin: 0 auto;">
-          <div style="flex:2">
-                <img class="svg" width="960" alt="US Map" src="../assets/us-states.svg" />
-          </div>
-            <div>
-                <section>
-                    <span class="title">
-                        Legend Categories (Max 6)
-                    </span>
-                    <br>
-                    <button class="btn btn-lg btn-ghost-blue" v-on:click="printSVG"> Download SVG </button>
-                    <br>
-                    <input v-model="selected" type="number" name="" min="1" :max="categories.length - 1" id="">
-                </section>
+      <div id="left" class="column">
+        <div class="top-left">
+            <span class="title">
+                Legend Categories (Max 6)
+            </span>
+            <br>
+            <br>
+            <div class="flex-container wrap">
+                <button class="btn btn-lg btn-vue-green" v-on:click="addCategory"> Add Category </button>
+                <button class="btn btn-lg btn-vue-green" v-on:click="printSVG"> Download PNG </button>
 
-                <div class="row">
-                    <div class="card" v-for="(category, idx) in categories" :key="idx">
-                        <div class="container">
-                            <h3>
-                                {{ category.label }} - <input type="radio"  :value="idx + 1" v-model="selected">
-                            </h3>
-                            <ul>
-                                <li v-for="(state, sidx) in category.states" :key="sidx">
-                                    {{ state }}
-                                </li>
-                            </ul>
-                        </div>
+            </div> 
+        </div>
+        <div class="bottom">
+            <div style="width: 350px; margin: 1rem;" v-for="(category, idx) in categories" :key="idx">
+                <div>
+                    <label :for="idx"> Select Category</label>
+                    <input type="radio" :id="idx" :value="idx + 1" v-model="selected">
+                </div>
+                <input style="width:100%;" type="text" :id="'label-' + idx" v-model="category.label">
+                <br>
+                <input type="text" :id="'color-' + idx" v-model="category.color">
+                    
+                <div class="md-chips flex-container wrap">
+                    <div class="md-chip" v-for="(state, sidx) in category.states" :key="sidx">
+                        <span>{{ state }}</span>
+                        <button type="button" class="md-chip-remove" v-on:click="removeState(idx, sidx, state)">
+                    </button>
                     </div>
                 </div>
             </div>
-      </div>
-    <div style="width: 960px">
-         <canvas id="canvas"></canvas>
+        </div>
+    </div>
+    <div id="right" class="column">
+        <div class="top-right"></div>
+        <div class="bottom">
+            <img class="svg" width="960" alt="US Map" src="../assets/us-states.svg" />
+            <canvas id="canvas"></canvas>
+        </div>
     </div>
   </div>
 </template>
@@ -51,7 +58,6 @@ function fillColor(paths, hexColor) {
 }
 
 function createLabel(idx, color, text) {
-    // console.log(`category_${idx}_color_box`)
     let colorBox = document.getElementById(`category_${idx}_color_box`);
     colorBox.style.strokeWidth = 1;
     colorBox.style.fill =  color;
@@ -59,9 +65,7 @@ function createLabel(idx, color, text) {
     labelText.textContent = text;
 }
 
-function add_category() {
-    
-}
+
 function drawInlineSVG(svgElement, ctx, callback) {
   var svgURL = new XMLSerializer().serializeToString(svgElement);
   var img  = new Image();
@@ -80,26 +84,16 @@ export default {
     selected: 1,
     categories: [ {
       color: '#00695c',
-      states: ['Colorado', 'Nevada'],
-      label: 'States I have Visited'
-    },
-    {
-      color: '#fdd835',
-      states: ['NorthDakota'],
-      label: 'States I have Traveled Through'
-    },
-    {
-      color: '#ab47bc',
-      states: ['Louisiana'],
-      label: 'States I have Not Yet Visited'
-    },
+      states: [],
+      label: 'My First Category'
+    }
     ]
   }
   },
   methods: {
       fillStates: function() {
-        resetStateFill();
-        this.$data.categories.forEach( (category, idx) => {
+        // resetStateFill();
+        this.categories.forEach( (category, idx) => {
             fillColor(category.states, category.color)
             createLabel(idx + 1, category.color,  category.label );
         })
@@ -121,6 +115,13 @@ export default {
             //   window.open(myCanvas.toDataURL());
             //   newTab.document.body.innerHTML = `<img src="${img}"></img>`
               })
+      },
+      addCategory: function addCategory() {
+        this.categories.push({color: '#fafafa', states:[], label:'New Label' })
+      },
+      removeState: function(idx, sidx, id) {
+        this.categories[idx].states.splice(sidx, 1);
+        resetStateFill(id);
       }
       
   },
@@ -148,7 +149,6 @@ export default {
 
             // Get the SVG tag, ignore the rest
             var svg = xmlDoc.getElementsByTagName('svg')[0];
-            // console.log(svg);
 
             // Add replaced image's ID to the new SVG
             if (typeof imgID !== 'undefined') {
@@ -174,20 +174,17 @@ export default {
             
 
             that.fillStates();
-            that.$data.categories[0].states.push('Alaska')
-            that.$data.categories.push({color: '#fefefe', states:[], label: 'Shitty states'})
+
             document.querySelectorAll('svg').forEach(function (svg, idx) {
                 svg.addEventListener('click', function (el) {
                     
                     const id = el.target.id;
-                    console.log(id);
-                    const invalid = id.indexOf('path') > -1 || id.indexOf('category') > -1;
+                    const invalid = id.indexOf('path') > -1 || id.indexOf('category') > -1 || id == '';
                     if (!invalid){
                         const selected = that.selected - 1;
                         const index = that.$data.categories[selected].states.indexOf(id) ;
                         if(index > -1){
                             that.$data.categories[selected].states = that.$data.categories[selected].states.filter(state => {
-                                console.log(state);
                                 return state !== id;
                             })
                             resetStateFill(id);
@@ -198,8 +195,7 @@ export default {
                                 })
                             });
                             that.$data.categories[selected].states.push(id);
-                        }
-                                   
+                        }       
                     }
                 });
             })
@@ -232,11 +228,6 @@ export default {
   box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
 }
 
-/* Add some padding inside the card container */
-.container {
-  padding: 2px 16px;
-}
-
 .title{
     font-size: 1.5rem;
 }
@@ -258,15 +249,199 @@ export default {
 }
 
 
-.btn-ghost-blue {
-  border: 2px solid #3498db;
+.btn-vue-green {
+  border: 2px solid #42b983;
 }
-.btn-ghost-blue:hover {
-  background-color: #3498db;
-}
-.btn-ghost-blue:active {
-  background-color: #217dbb;
+.btn-vue-green:hover {
+  background-color: #42b983;
 }
 
+/* Flex Container */
+.flex-container {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  -ms-box-orient: horizontal;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -moz-flex;
+  display: -webkit-flex;
+  display: flex;
+}
+.wrap    { 
+  -webkit-flex-wrap: wrap;
+  flex-wrap: wrap;
+}  
 
+/* Chips */
+.md-chip {
+  display: inline-block;
+  background: #e0e0e0;
+  padding: 0 12px;
+  border-radius: 32px;
+  font-size: 13px;
+}
+.md-chip.md-chip-hover:hover {
+  background: #ccc;
+}
+
+.md-chip-clickable {
+  cursor: pointer;
+}
+
+.md-chip, .md-chip-icon {
+  height: 32px;
+  line-height: 32px;
+}
+
+.md-chip-icon {
+  display: block;
+  float: left;
+  background: #009587;
+  width: 32px;
+  border-radius: 50%;
+  text-align: center;
+  color: white;
+  margin: 0 8px 0 -12px;
+}
+
+.md-chip-remove {
+  display: inline-block;
+  background: #aaa;
+  border: 0;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  padding: 0;
+  margin: 0 -4px 0 4px;
+  cursor: pointer;
+  font: inherit;
+  line-height: 20px;
+}
+.md-chip-remove:after {
+  color: #e0e0e0;
+  content: 'x';
+}
+.md-chip-remove:hover {
+  background: #999;
+}
+.md-chip-remove:active {
+  background: #777;
+}
+
+.md-chips {
+  padding: 12px 0;
+}
+.md-chips .md-chip {
+  margin: 0 5px 3px 0;
+}
+
+.md-chip-raised {
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+}
+/* Material Radio */
+@keyframes ripple {
+  0% {
+    box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0);
+  }
+  50% {
+    box-shadow: 0px 0px 0px 15px rgba(0, 0, 0, 0.1);
+  }
+  100% {
+    box-shadow: 0px 0px 0px 15px rgba(0, 0, 0, 0);
+  }
+}
+.md-radio {
+  margin: 16px 0;
+}
+.md-radio.md-radio-inline {
+  display: inline-block;
+}
+.md-radio input[type="radio"] {
+  display: none;
+}
+.md-radio input[type="radio"]:checked + label:before {
+  border-color: #337ab7;
+  animation: ripple 0.2s linear forwards;
+}
+.md-radio input[type="radio"]:checked + label:after {
+  transform: scale(1);
+}
+.md-radio label {
+  display: inline-block;
+  height: 20px;
+  position: relative;
+  padding: 0 30px;
+  margin-bottom: 0;
+  cursor: pointer;
+  vertical-align: bottom;
+}
+.md-radio label:before, .md-radio label:after {
+  position: absolute;
+  content: '';
+  border-radius: 50%;
+  transition: all .3s ease;
+  transition-property: transform, border-color;
+}
+.md-radio label:before {
+  left: 0;
+  top: 0;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(0, 0, 0, 0.54);
+}
+.md-radio label:after {
+  top: 5px;
+  left: 5px;
+  width: 10px;
+  height: 10px;
+  transform: scale(0);
+  background: #337ab7;
+}
+/* flex layout */
+html {
+    height: 100%;
+}
+.home {
+    display: flex;
+}
+body {
+    height: 100%;   
+    overflow: hidden;  /*makes the body non-scrollable (we will add scrolling to the sidebar and main content containers)*/
+    margin: 0px;  /*removes default style*/
+    /* display: flex;  enables flex content for its children */
+    box-sizing: border-box;
+}
+
+.column {
+    height: 100%;  /*allows both columns to span the full height of the browser window*/
+    display: flex;
+    flex-direction: column;  /*places the left and right headers above the bottom content*/
+}
+
+#left {
+    flex-shrink: 0;  /*makes sure that content is not cut off in a smaller browser window*/
+}
+#right {
+    flex-grow: 1;
+}
+.top-left {
+    flex-shink: 0;
+}
+
+.top-right {
+    flex-shrink: 0;
+    display: inline-flex;
+}
+
+ul {
+    display: inline-flex;
+    list-style: none;
+}
+
+.bottom {
+    flex-grow: 1;  /*ensures that the container will take up the full height of the parent container*/
+    overflow-y: auto;  /*adds scroll to this container*/
+}
 </style>
