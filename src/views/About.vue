@@ -13,6 +13,8 @@
        Downloading an Image from the Browser Window( <a href="https://stackoverflow.com/questions/17311645/download-image-with-javascript">Source</a> )
        <br>
        Deploying a VueJS App to Github Pages ( <a href="https://medium.com/@codetheorist/vue-up-your-github-pages-the-right-way-955486220418">Source</a> )
+       <br>
+       Material Chips - MIT License ( <a href="https://codepen.io/hansmaad/pen/QGYpey">Source - Hannes Kamecke</a> )
     </p>
     <p>  
       <a href="">
