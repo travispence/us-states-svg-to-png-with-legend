@@ -1,5 +1,14 @@
 # us-states-svg-to-png-with-legend
-A tool to assist creating a PNG graphic from an SVG with custom legend categories and labels. [View Demo](https://travispence.github.io/us-states-svg-to-png-with-legend/#/)
+
+A tool to assist creating a PNG image from an SVG with custom legend colors and labels. [View Demo](https://travispence.github.io/us-states-svg-to-png-with-legend/#/)
+
+The was built with the Vue CLI tool and follows the basic structure provided. 
+
+
+##Limitations
+
+Up to 6 colors and labels can be specified. This is because the `<text>` annd `<rect>` components are hardcoded into the SVG image. 
+
 
 ## Project setup
 ```
@@ -26,6 +35,4 @@ npm run test
 npm run lint
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
 
