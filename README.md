@@ -10,6 +10,7 @@ The was built with the Vue CLI tool and follows the basic structure provided.
 
 Up to 6 colors and labels can be specified. This is because the `<text>` annd `<rect>` components are hardcoded into the SVG image. 
 
+Developed and Tested on a Desktop running Chrome. 
 
 ## Project setup
 ```
